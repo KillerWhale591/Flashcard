@@ -17,7 +17,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.firestore.auth.User;
 
 public class CreateUserActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
@@ -85,7 +84,7 @@ public class CreateUserActivity extends AppCompatActivity {
                                     Toast.makeText(CreateUserActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
                                 } else {
                                     FirebaseUser Fuser = task.getResult().getUser();
-                                    writeNewUser(Fuser.getUid(), FirstName, LastName);
+                                    writeNewUser(Fuser.getUid(), FirstName, LastName, Fuser.getEmail());
                                     Toast.makeText(CreateUserActivity.this, "signed up successfully", Toast.LENGTH_SHORT).show();
 
 //                                    Intent intent = new Intent(CreateUserActivity.this, MainActivity.class);
@@ -104,9 +103,9 @@ public class CreateUserActivity extends AppCompatActivity {
         });
 
     }
-    private void writeNewUser(String userId, String FirstName, String LastName) {
-        mDatabase.child("users").child(userId).setValue(FirstName);
-        mDatabase.child("users").child(userId).setValue(LastName);
+    private void writeNewUser(String userId, String FirstName, String LastName, String email) {
+        User user = new User(userId,email,FirstName,LastName);
+        mDatabase.child("users").child(userId).setValue(user);
 
     }
 }
