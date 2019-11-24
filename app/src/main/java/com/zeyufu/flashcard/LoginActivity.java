@@ -19,6 +19,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText edtPassword;
     private Button btnLogin;
 
+    private Button btnCreateUser;
     private View.OnClickListener btnLoginListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
@@ -45,6 +46,16 @@ public class LoginActivity extends AppCompatActivity {
         edtUsername = findViewById(R.id.edtUsername);
         edtPassword = findViewById(R.id.edtPassword);
         btnLogin = findViewById(R.id.btnLogin);
+        btnCreateUser = findViewById(R.id.btnCreateUser);
         btnLogin.setOnClickListener(btnLoginListener);
+        btnCreateUser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(LoginActivity.this, CreateUserActivity.class);
+                startActivity(intent);
+
+            }
+        });
+
     }
 }
