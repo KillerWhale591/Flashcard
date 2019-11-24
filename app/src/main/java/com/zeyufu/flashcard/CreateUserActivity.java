@@ -87,8 +87,9 @@ public class CreateUserActivity extends AppCompatActivity {
                                     writeNewUser(Fuser.getUid(), FirstName, LastName, Fuser.getEmail());
                                     Toast.makeText(CreateUserActivity.this, "signed up successfully", Toast.LENGTH_SHORT).show();
 
-//                                    Intent intent = new Intent(CreateUserActivity.this, MainActivity.class);
-//                                    startActivity(intent);
+                                    Intent intent = new Intent(CreateUserActivity.this, LoginActivity.class);
+                                    startActivity(intent);
+                                    finish();
                                 }
                             }
                         });
@@ -99,6 +100,7 @@ public class CreateUserActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(CreateUserActivity.this, LoginActivity.class);
                 startActivity(intent);
+                finish();
             }
         });
 
