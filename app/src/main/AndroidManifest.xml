@@ -9,28 +9,24 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-<<<<<<< HEAD
+
+        <activity
+            android:name=".CreateUserActivity"
+            android:screenOrientation="portrait">
+        </activity>
         <activity
             android:name=".LoginActivity"
             android:screenOrientation="portrait">
-=======
-        <activity android:name=".CreateUserActivity"></activity>
-        <activity android:name=".LoginActivity">
->>>>>>> 233cc97d594e198ff7110c1676122755845a0ba5
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-<<<<<<< HEAD
         <activity
             android:name=".MainActivity"
             android:screenOrientation="portrait">
         </activity>
-=======
-        <activity android:name=".MainActivity" />
->>>>>>> 233cc97d594e198ff7110c1676122755845a0ba5
     </application>
 
 </manifest>
