@@ -32,6 +32,7 @@ public class LoginActivity extends AppCompatActivity {
     private Button btnLogin;
     private FirebaseAuth mAuth;
 
+    private Button btnCreateUser;
     private View.OnClickListener btnLoginListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
@@ -84,6 +85,15 @@ public class LoginActivity extends AppCompatActivity {
                                 }
                             });
                 }
+            }
+        });
+        btnCreateUser = findViewById(R.id.btnCreateUser);
+        btnCreateUser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(LoginActivity.this, CreateUserActivity.class);
+                startActivity(intent);
+
             }
         });
     }
