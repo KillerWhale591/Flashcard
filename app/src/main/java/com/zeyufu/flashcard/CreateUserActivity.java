@@ -20,6 +20,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
@@ -46,6 +47,7 @@ public class CreateUserActivity extends AppCompatActivity {
         setContentView(R.layout.activity_create_user);
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference();
+        db = FirebaseFirestore.getInstance();
         registerEmail = findViewById(R.id.registerEmail);
         registerFirstName = findViewById(R.id.registerFirstName);
         registerLastname = findViewById(R.id.registerLastName);
@@ -121,11 +123,11 @@ public class CreateUserActivity extends AppCompatActivity {
         UserPost.put("LastName" , LastName);
         UserPost.put("email" , email);
         UserPost.put("uid" , userId);
-        db.collection("test").document()
-                .set(UserPost)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
+        db.collection("user")
+                .add(UserPost)
+                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override
-                    public void onSuccess(Void aVoid) {
+                    public void onSuccess(DocumentReference documentReference) {
                         Log.d(TAG, "DocumentSnapshot successfully written!");
                         finish();
                     }
@@ -138,7 +140,7 @@ public class CreateUserActivity extends AppCompatActivity {
                 });
 
 
-        mDatabase.child("users").child(userId).setValue(user);
+//        mDatabase.child("users").child(userId).setValue(user);
 
     }
 }
