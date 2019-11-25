@@ -97,10 +97,6 @@ public class CreateUserActivity extends AppCompatActivity {
                                     FirebaseUser Fuser = task.getResult().getUser();
                                     writeNewUser(Fuser.getUid(), FirstName, LastName, Fuser.getEmail());
                                     Toast.makeText(CreateUserActivity.this, "signed up successfully", Toast.LENGTH_SHORT).show();
-
-                                    Intent intent = new Intent(CreateUserActivity.this, LoginActivity.class);
-                                    startActivity(intent);
-                                    finish();
                                 }
                             }
                         });
@@ -109,8 +105,6 @@ public class CreateUserActivity extends AppCompatActivity {
         btnGoToLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(CreateUserActivity.this, LoginActivity.class);
-                startActivity(intent);
                 finish();
             }
         });
