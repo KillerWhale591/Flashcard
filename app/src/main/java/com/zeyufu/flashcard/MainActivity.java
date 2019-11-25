@@ -33,6 +33,8 @@ public class MainActivity extends AppCompatActivity {
     private final int INDEX_DIVISOR = 1;
     private final int INDEX_DIVIDEND = 2;
 
+    private final int NUM_PROBLEM_LIST = 200;
+
     private final String STR_EXTRA_NAME = "username";
     private final String SYMBOL_DIVIDE = "÷";
     private final String TOAST_WELCOME = "Welcome, ";
@@ -187,8 +189,8 @@ public class MainActivity extends AppCompatActivity {
 
     // Generate and add a new problem
     private void generateOne() {
-        
-        int id = new Random().nextInt(50) + 1;
+
+        int id = new Random().nextInt(NUM_PROBLEM_LIST) + 1;
 
         db.collection("question")
                 .whereEqualTo("qid", id)
@@ -235,5 +237,6 @@ public class MainActivity extends AppCompatActivity {
         problem = null;
         currentInd = -1;
         score = 0;
+        problemList.clear();
     }
 }
