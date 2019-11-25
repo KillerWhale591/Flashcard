@@ -61,7 +61,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 String email = edtEmail.getText().toString();
-                String pwd = edtEmail.getText().toString();
+                String pwd = edtPassword.getText().toString();
                 if (email.isEmpty()) {
                     Toast.makeText(LoginActivity.this, TOAST_EMPTY_EMAIL, Toast.LENGTH_SHORT).show();
                 } else if (pwd.isEmpty()) {
