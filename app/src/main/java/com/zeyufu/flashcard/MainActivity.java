@@ -72,7 +72,6 @@ public class MainActivity extends AppCompatActivity {
             reset();
             currentInd = 0;
             generateOne();
-            setCurrentProblem();
             edtAnswer.setText("");
         }
     };
@@ -93,7 +92,6 @@ public class MainActivity extends AppCompatActivity {
                     currentInd++;
                     if (currentInd < NUM_PROBLEMS) { // Game not ended
                         generateOne();
-                        setCurrentProblem();
                         edtAnswer.setText("");
                     } else { // Game ended
                         String strScore = score + TOAST_SCORE;
@@ -189,11 +187,9 @@ public class MainActivity extends AppCompatActivity {
 
     // Generate and add a new problem
     private void generateOne() {
-        // Range [2, 20]
+        
         int id = new Random().nextInt(50) + 1;
 
-        System.out.println("top");
-//
         db.collection("question")
                 .whereEqualTo("qid", id)
                 .get()
@@ -208,46 +204,13 @@ public class MainActivity extends AppCompatActivity {
                                 int qid = ((Long) document.getData().get("qid")).intValue();
                                 problem = new int[]{ result, divisor, dividend };
                                 problemList.add(qid);
+                                setCurrentProblem();
                             }
                         } else {
                             Log.d(TAG, "Error getting documents: ", task.getException());
                         }
                     }
                 });
-        System.out.println("bottom");
-
-
-//        for(int i = 1; i <= 50; i++) {
-//            Map<String, Object> test = new HashMap<>();
-//            int result = new Random().nextInt(19) + 2;
-//            int divisor = new Random().nextInt(19) + 2;
-//            int dividend = divisor * result;
-//            test.put("answer", result);
-//            test.put("divisor", divisor);
-//            test.put("dividend", dividend);
-//            test.put("qid", i);
-//
-//            db.collection("question").document()
-//                    .set(test)
-//                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-//                        @Override
-//                        public void onSuccess(Void aVoid) {
-//                            Log.d(TAG, "DocumentSnapshot successfully written!");
-//                        }
-//                    })
-//                    .addOnFailureListener(new OnFailureListener() {
-//                        @Override
-//                        public void onFailure(@NonNull Exception e) {
-//                            Log.w(TAG, "Error writing document", e);
-//                        }
-//                    });
-//        }
-
-
-//        int result = new Random().nextInt(19) + 2;
-//        int divisor = new Random().nextInt(19) + 2;
-//        int dividend = divisor * result;
-//        problem = new int[]{ result, divisor, dividend };
     }
 
     private void setCurrentProblem() {
