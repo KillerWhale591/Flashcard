@@ -5,21 +5,31 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class CreateUserActivity extends AppCompatActivity {
+    private static final String TAG = "Tag";
     private FirebaseAuth mAuth;
+    private FirebaseFirestore db;
     private DatabaseReference mDatabase;
     private EditText registerEmail;
     private EditText registerFirstName;
@@ -37,6 +47,7 @@ public class CreateUserActivity extends AppCompatActivity {
         setContentView(R.layout.activity_create_user);
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference();
+        db = FirebaseFirestore.getInstance();
         registerEmail = findViewById(R.id.registerEmail);
         registerFirstName = findViewById(R.id.registerFirstName);
         registerLastname = findViewById(R.id.registerLastName);
@@ -86,10 +97,6 @@ public class CreateUserActivity extends AppCompatActivity {
                                     FirebaseUser Fuser = task.getResult().getUser();
                                     writeNewUser(Fuser.getUid(), FirstName, LastName, Fuser.getEmail());
                                     Toast.makeText(CreateUserActivity.this, "signed up successfully", Toast.LENGTH_SHORT).show();
-
-                                    Intent intent = new Intent(CreateUserActivity.this, LoginActivity.class);
-                                    startActivity(intent);
-                                    finish();
                                 }
                             }
                         });
@@ -98,8 +105,6 @@ public class CreateUserActivity extends AppCompatActivity {
         btnGoToLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(CreateUserActivity.this, LoginActivity.class);
-                startActivity(intent);
                 finish();
             }
         });
@@ -107,7 +112,29 @@ public class CreateUserActivity extends AppCompatActivity {
     }
     private void writeNewUser(String userId, String FirstName, String LastName, String email) {
         User user = new User(userId,email,FirstName,LastName);
-        mDatabase.child("users").child(userId).setValue(user);
+        Map<String, Object> UserPost = new HashMap<>();
+        UserPost.put("FirstName" , FirstName);
+        UserPost.put("LastName" , LastName);
+        UserPost.put("email" , email);
+        UserPost.put("uid" , userId);
+        db.collection("user")
+                .add(UserPost)
+                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    @Override
+                    public void onSuccess(DocumentReference documentReference) {
+                        Log.d(TAG, "DocumentSnapshot successfully written!");
+                        finish();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error writing document", e);
+                    }
+                });
+
+
+//        mDatabase.child("users").child(userId).setValue(user);
 
     }
 }
