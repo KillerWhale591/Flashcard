@@ -5,21 +5,30 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class CreateUserActivity extends AppCompatActivity {
+    private static final String TAG = "Tag";
     private FirebaseAuth mAuth;
+    private FirebaseFirestore db;
     private DatabaseReference mDatabase;
     private EditText registerEmail;
     private EditText registerFirstName;
@@ -107,6 +116,28 @@ public class CreateUserActivity extends AppCompatActivity {
     }
     private void writeNewUser(String userId, String FirstName, String LastName, String email) {
         User user = new User(userId,email,FirstName,LastName);
+        Map<String, Object> UserPost = new HashMap<>();
+        UserPost.put("FirstName" , FirstName);
+        UserPost.put("LastName" , LastName);
+        UserPost.put("email" , email);
+        UserPost.put("uid" , userId);
+        db.collection("test").document()
+                .set(UserPost)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "DocumentSnapshot successfully written!");
+                        finish();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error writing document", e);
+                    }
+                });
+
+
         mDatabase.child("users").child(userId).setValue(user);
 
     }
