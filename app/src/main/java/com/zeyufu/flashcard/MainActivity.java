@@ -110,6 +110,8 @@ public class MainActivity extends AppCompatActivity {
                                     @Override
                                     public void onSuccess(Void aVoid) {
                                         Log.d(TAG, "DocumentSnapshot successfully written!");
+                                        reset();
+                                        clearScreen();
                                     }
                                 })
                                 .addOnFailureListener(new OnFailureListener() {
@@ -118,9 +120,6 @@ public class MainActivity extends AppCompatActivity {
                                         Log.w(TAG, "Error writing document", e);
                                     }
                                 });
-
-                        reset();
-                        clearScreen();
                     }
                 } else {
                     Toast.makeText(MainActivity.this, TOAST_INVALID_ANS, Toast.LENGTH_SHORT).show();
