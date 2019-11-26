@@ -99,6 +99,68 @@ public class MainActivity extends AppCompatActivity {
                         String strScore = score + TOAST_SCORE;
                         Toast.makeText(MainActivity.this, strScore, Toast.LENGTH_SHORT).show();
 
+                        db.collection("user")
+                                .whereEqualTo("uid", Uid)
+                                .get()
+                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                        if (task.isSuccessful()) {
+                                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                                Map<String, Object> user = new HashMap<>();
+                                                user.put("FirstName", document.getData().get("FirstName"));
+                                                user.put("LastName", document.getData().get("LastName"));
+                                                user.put("email", document.getData().get("email"));
+                                                user.put("uid", document.getData().get("uid"));
+//                                                if(document.getData().containsKey("best")){
+                                                String id = document.getId();
+                                                if(document.getData().containsKey("best")){
+                                                    int best = ((Long) document.getData().get("best")).intValue();
+                                                    if (score > best){
+                                                        System.out.println(score);
+                                                        user.put("best", score);
+                                                        db.collection("user").document(id)
+                                                                .set(user)
+                                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                    @Override
+                                                                    public void onSuccess(Void aVoid) {
+                                                                        System.out.println("here");
+                                                                        Log.d(TAG, "DocumentSnapshot successfully written!");
+                                                                    }
+                                                                })
+                                                                .addOnFailureListener(new OnFailureListener() {
+                                                                    @Override
+                                                                    public void onFailure(@NonNull Exception e) {
+                                                                        Log.w(TAG, "Error writing document", e);
+                                                                    }
+                                                                });
+                                                    }
+                                                } else{
+                                                    user.put("best", score);
+                                                    db.collection("user").document(id)
+                                                            .set(user)
+                                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                @Override
+                                                                public void onSuccess(Void aVoid) {
+                                                                    Log.d(TAG, "DocumentSnapshot successfully written!");
+                                                                    reset();
+                                                                    clearScreen();
+                                                                }
+                                                            })
+                                                            .addOnFailureListener(new OnFailureListener() {
+                                                                @Override
+                                                                public void onFailure(@NonNull Exception e) {
+                                                                    Log.w(TAG, "Error writing document", e);
+                                                                }
+                                                            });
+                                                }
+                                            }
+                                        } else {
+                                            Log.d(TAG, "Error getting documents: ", task.getException());
+                                        }
+                                    }
+                                });
+
                         Map<String, Object> test = new HashMap<>();
                         test.put("grade", score);
                         test.put("qid", problemList);
