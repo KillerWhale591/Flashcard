@@ -15,4 +15,5 @@
     <string name="main_hint_answer">Enter answer</string>
     <string name="main_text_submit">Submit</string>
     <string name="main_text_restart">Restart</string>
+    <string name="viewTopUser">Top Users</string>
 </resources>
