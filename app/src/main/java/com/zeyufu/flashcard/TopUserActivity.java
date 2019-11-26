@@ -20,7 +20,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -32,6 +36,8 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Nullable;
 
 public class TopUserActivity extends AppCompatActivity {
 
@@ -64,109 +70,40 @@ public class TopUserActivity extends AppCompatActivity {
             }
         });
 
-        lvTopUsers = (ListView)findViewById(R.id.lvTopUsers);
-        readData();
+        lvTopUsers = (ListView) findViewById(R.id.lvTopUsers);
         lvAdapter = new TopUsersAdapter(userList, scoreList, this);
         lvTopUsers.setAdapter(lvAdapter);
-        clearData();
-
     }
 
-    protected void clearData(){
-        userList = new ArrayList();
-        scoreList = new ArrayList();
+    @Override
+    protected void onStart() {
+        super.onStart();
+        readData();
     }
 
     /* Read Top User info from Firebase*/
-    protected void readData(){
-        int maxNum = NUM_TOP_USERS;
+    protected void readData() {
 
-        final HashMap<String, Integer> userScore =  new HashMap();
-
-        userInfo.get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>(){
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot userDocument : task.getResult()) {
-                        String fName = (String) userDocument.getData().get("FirstName");
-                        String lName = (String) userDocument.getData().get("LastName");
-                        final String userName = fName + " " + lName;
-                        String uid = (String) userDocument.getData().get("uid");
-                        testInfo.whereEqualTo("uid", uid)
-                                .get()
-                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>(){
-                                    Integer totalScore = 0;
-                                    @Override
-                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                        if (task.isSuccessful()) {
-
-                                            for (QueryDocumentSnapshot testDocument : task.getResult()) {
-                                                Integer score = ((Long) testDocument.getData().get("grade")).intValue();
-                                                totalScore += score;
-                                            }
-                                            userScore.put(userName, totalScore);
-                                        } else {
-                                            Log.d("Reading testinfo", "get failed with ", task.getException());
-                                        }
-                                    }
-                                });
+        Query query = userInfo.orderBy("best", Query.Direction.DESCENDING).limit(NUM_TOP_USERS);
+        query.get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        List<DocumentSnapshot> documents = task.getResult().getDocuments();
+                        if (documents.size() > 0) {
+                            for (DocumentSnapshot document : documents) {
+                                if (document != null) {
+                                    String name = document.get("FirstName") + " " + document.get("LastName");
+                                    int best = ((Long) document.get("best")).intValue();
+                                    userList.add(name);
+                                    scoreList.add(best);
+                                    ((TopUsersAdapter) lvAdapter).notifyDataSetChanged();
+                                }
+                            }
+                        }
                     }
-                } else {
-                    Log.d("Reading userinfo", "Error getting documents: ", task.getException());
-                }
-            }
-        });
-        HashMap<String, Integer> sortedScore = sortByValue(userScore);
-
-        if (sortedScore.size() < maxNum){
-            maxNum = sortedScore.size();
-        }
-
-        int i = 0;
-        for (Map.Entry<String, Integer> en : sortedScore.entrySet()) {
-            if (i == maxNum){break;}
-            userList.add(en.getKey());
-            scoreList.add(en.getValue());
-            i++;
-        }
-
-
+                });
     }
-
-    /* Generate dummy data for off-line test*/
-    protected void genDummyData(){
-        userList.add("AAA");
-        userList.add("BBB");
-        userList.add("CCC");
-        scoreList.add(100);
-        scoreList.add(20);
-        scoreList.add(5);
-    }
-
-    public static HashMap<String, Integer> sortByValue(HashMap<String, Integer> hm)
-    {
-        // Create a list from elements of HashMap
-        List<Map.Entry<String, Integer> > list =
-                new LinkedList<Map.Entry<String, Integer> >(hm.entrySet());
-
-        // Sort the list
-        Collections.sort(list, new Comparator<Map.Entry<String, Integer> >() {
-            public int compare(Map.Entry<String, Integer> o1,
-                               Map.Entry<String, Integer> o2)
-            {
-                return (o1.getValue()).compareTo(o2.getValue());
-            }
-        });
-
-        // put data from sorted list to hashmap
-        HashMap<String, Integer> temp = new LinkedHashMap<String, Integer>();
-        for (Map.Entry<String, Integer> aa : list) {
-            temp.put(aa.getKey(), aa.getValue());
-        }
-        return temp;
-    }
-
 }
 
 class TopUsersAdapter extends BaseAdapter {
