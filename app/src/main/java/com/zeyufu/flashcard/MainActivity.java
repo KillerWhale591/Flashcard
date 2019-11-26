@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText edtAnswer;
     private Button btnGenerate;
     private Button btnSubmit;
+    private Button btnViewTopUsers;
 
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
@@ -140,9 +141,17 @@ public class MainActivity extends AppCompatActivity {
         edtAnswer = findViewById(R.id.edtAnswer);
         btnGenerate = findViewById(R.id.btnGenerate);
         btnSubmit = findViewById(R.id.btnSubmit);
+        btnViewTopUsers = findViewById(R.id.btnTopUsers);
 
         btnGenerate.setOnClickListener(btnGenerateListener);
         btnSubmit.setOnClickListener(btnSubmitListener);
+        btnViewTopUsers.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(getApplicationContext(), TopUserActivity.class);
+                startActivity(i);
+            }
+        });
 
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
